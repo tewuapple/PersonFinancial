@@ -1,0 +1,273 @@
+﻿<common:LayoutAwarePage   
+    x:Name="pageRoot"
+    x:Class="PersonalFinancial.MVVM_Sidekick.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PersonalFinancial.MVVM_Sidekick"
+    xmlns:mvvm="using:MVVMSidekick.Views"
+    xmlns:common="using:PersonalFinancial.MVVM_Sidekick.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PersonalFinancial.MVVM_Sidekick.ViewModels"
+    xmlns:patternsitems="using:MVVMSidekick.Patterns.ItemsAndSelection"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
+        <x:String x:Key="AppName">工资计算器</x:String>
+        <x:String x:Key="PerRate">个人缴费比例：</x:String>
+        <x:String x:Key="YL">养老</x:String>
+        <x:String x:Key="CalcDetail">社保与公积金缴费明细（可调整参数）</x:String>
+        <x:String x:Key="Mark">注:根据税收规定，个人所得税起征点自2011年9月1日起由2000元提高到3500元。计算结果仅供参考,不可作为合同、劳动争议、仲裁等的依据。</x:String>
+        <x:String x:Key="GJJJS">您的公积金基数：</x:String>
+        <x:String x:Key="SBJS">您的社保基数：</x:String>
+        <x:String x:Key="Address">所在地区：</x:String>
+        <x:String x:Key="SalaryTaxBefer">税前工资：</x:String>
+        <x:String x:Key="InsuranceType">公司缴纳的保险类型：</x:String>
+        <x:String x:Key="Calculate">计算</x:String>
+        <x:String x:Key="ResetCalc">重新计算</x:String>
+        <x:String x:Key="SalaryTaxAfter">税后工资：</x:String>
+        <x:String x:Key="Tax">缴纳个税：</x:String>
+        <x:String x:Key="YiL">医疗</x:String>
+        <x:String x:Key="ShiYe">失业</x:String>
+        <x:String x:Key="GS">工伤</x:String>
+        <x:String x:Key="SY">生育</x:String>
+        <x:String x:Key="GJJ">公积金</x:String>
+        <x:String x:Key="Rate">%：</x:String>
+        <x:String x:Key="PerSum">个人缴费合计：</x:String>
+        <x:String x:Key="TaxableAmount">应纳税额总计：</x:String>
+        <x:String x:Key="PerDetail">个人缴费明细：</x:String>
+        <x:String x:Key="ComDetail">单位缴费明细：</x:String>
+        <x:String x:Key="MinSBJS">最低值：</x:String>
+        <x:String x:Key="MaxSBJS">最高值：</x:String>
+        <x:String x:Key="ComSum">单位缴费合计：</x:String>
+        <x:String x:Key="ComTotal">单位支出总计：</x:String>
+  
+        <vm:MainPage_Model x:Key="DesignVM"/>
+    </Page.Resources>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid Style="{StaticResource LayoutRootStyle}" DataContext="{StaticResource DesignVM}">
+      
+            <Grid.RowDefinitions>
+                <RowDefinition Height="140"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Back button and page title -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
+                <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid x:Name="GridHeader" Height="350" Width="600" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock TextWrapping="Wrap" Text="{StaticResource Address}"/>
+                    <ComboBox x:Name="cbbCity" Grid.Column="1"  ItemsSource="{Binding Cities.Items}" SelectedItem="{Binding Cities.SelectedItem, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{StaticResource SalaryTaxBefer}"/>
+                        <TextBox x:Name="txtSalary" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap" Text="{StaticResource InsuranceType}"/>
+                        <ComboBox x:Name="cbbInsuranceType" Grid.Column="1" Grid.Row="2"/>
+                        <Button x:Name="ResetCalc" Content="{StaticResource ResetCalc}" HorizontalAlignment="Stretch" Grid.Row="3" VerticalAlignment="Stretch" />
+                        <Button x:Name="Calc" Content="{StaticResource Calculate}" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="3" VerticalAlignment="Stretch" />
+                        <TextBlock Grid.Row="4" TextWrapping="Wrap" Text="{StaticResource SalaryTaxAfter}"/>
+                        <TextBox x:Name="txtSalaryTaxAfter" Grid.Column="1" Grid.Row="4" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.SalaryAfterTax, ElementName=pageRoot, Mode=TwoWay}"/>
+                        <TextBox x:Name="txtPerTax" Grid.Column="1" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.PerTax, ElementName=pageRoot, Mode=TwoWay}"/>
+                        <TextBlock Grid.Row="5" TextWrapping="Wrap" Text="{StaticResource Tax}"/>
+                        <TextBlock Grid.Row="6" TextWrapping="Wrap" Text="{StaticResource Mark}" Grid.ColumnSpan="2" Margin="0,10,0,0"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" Height="600" Margin="630,0,0,0" VerticalAlignment="Top" Width="1000">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="400"/>
+                            <RowDefinition Height="100"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="500"/>
+                            <ColumnDefinition Width="500"/>
+                        </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="2" DataContext="{Binding SelectedSBRateCopy}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="300"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource YL}"/>
+                            <TextBox x:Name="txtPerYLRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding PerYLRate, Mode=TwoWay}"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Margin="0,5,0,45" Grid.Row="1" Grid.RowSpan="2"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Margin="0,5,0,45" Grid.Row="2" Grid.RowSpan="2"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Margin="0,5,0,45" Grid.Row="3" Grid.RowSpan="2"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="4"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="5"/>
+                            <TextBox x:Name="txtPerYiLRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Grid.Row="1" Text="{Binding PerYiLRate, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerShiYeRate" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Grid.Row="2" Grid.Column="1" Text="{Binding PerShiYeRate, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerGSRate" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Grid.Row="3" Grid.Column="1" Text="{Binding PerGSRate, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerSYRate" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Grid.Row="4" Grid.Column="1" Text="{Binding PerSYRate, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtGJJRate" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Grid.Row="5" Grid.Column="1" Text="{Binding PerGJJRate, Mode=TwoWay}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource YiL}" Grid.Row="1" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource ShiYe}" Grid.Row="2" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource GS}" Grid.Row="3" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource SY}" Grid.Row="4" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource GJJ}" Grid.Row="5" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBox x:Name="txtPerYL" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.PerYL, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerYiL" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" Text="{Binding ViewModel.Person.PerYiL, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerShiYe" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Text="{Binding ViewModel.Person.PerShiYe, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerGS" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="3" Text="{Binding ViewModel.Person.PerGS, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerSY" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="4" Text="{Binding ViewModel.Person.PerSY, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtPerGJJ" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5" Text="{Binding ViewModel.Person.PerGJJ, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBlock Grid.Row="6" TextWrapping="Wrap" Text="{StaticResource PerSum}" Grid.ColumnSpan="3" />
+                            <TextBox x:Name="txtPerSum" Grid.Column="3" Grid.Row="6" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.PerSum, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBlock Grid.Row="7" TextWrapping="Wrap" Text="{StaticResource TaxableAmount}" Grid.ColumnSpan="3"/>
+                            <TextBox x:Name="txtTaxableAmount" Grid.Column="3" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.TaxableAmount, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource GJJ}" Grid.Row="5" RenderTransformOrigin="0.624,1.379" Grid.Column="3" Margin="300,0,-50,0"/>
+                        </Grid>
+                        <TextBlock TextWrapping="Wrap" Text="{StaticResource CalcDetail}" Grid.ColumnSpan="2" FontFamily="Global User Interface"/>
+                        <Grid Grid.Row="3" Grid.ColumnSpan="2" DataContext="{Binding SelectedItem.Sr, ElementName=cbbCity}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource SBJS}"/>
+                            <TextBox x:Name="txtSBJS" Grid.Column="1" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.SBJS, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtGJJJS" Grid.Row="1" TextWrapping="Wrap" RenderTransformOrigin="0.172,-0.08" IsReadOnly="True" Grid.Column="1" Text="{Binding ViewModel.Person.GJJJS, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{StaticResource GJJJS}"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource MinSBJS}"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource MinSBJS}" Grid.Row="1"/>
+                            <TextBlock Grid.Column="4" TextWrapping="Wrap" Text="{StaticResource MaxSBJS}"/>
+                            <TextBox x:Name="txtMinSBJS" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding MinSBJS, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtMinGJJJS" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" RenderTransformOrigin="0.47,0.44" Text="{Binding MinGJJJS, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtMaxSBJS" Grid.Column="5" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding MaxSBJS, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtMaxGJJJS" Grid.Column="5" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" RenderTransformOrigin="0.47,0.44" Text="{Binding MaxGJJJS, Mode=TwoWay}"/>
+                        </Grid>
+                        <Grid Grid.Row="2" Grid.Column="1" Height="400" Width="500" DataContext="{Binding SelectedItem.Sr, ElementName=cbbCity}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="300"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource YL}" RenderTransformOrigin="0.72,0.98"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource YiL}" RenderTransformOrigin="0.624,1.379" Grid.Row="1"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource ShiYe}" Grid.Row="2" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource GS}" Grid.Row="3" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock TextWrapping="Wrap" Text="{StaticResource SY}" Grid.Row="4" RenderTransformOrigin="0.624,1.379"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="5" Margin="2,1,298,49" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="4"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="3"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="2"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722" Grid.Row="1"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{StaticResource Rate}" RenderTransformOrigin="0.4,1.722"/>
+                            <TextBox x:Name="txtComYLRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComYLRate, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComYiLRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComYiLRate, Mode=TwoWay}" Grid.Row="1"/>
+                            <TextBox x:Name="txtComShiYeRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComShiYeRate, Mode=TwoWay}" Grid.Row="2"/>
+                            <TextBox x:Name="txtComGSRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComGSRate, Mode=TwoWay}" Grid.Row="3"/>
+                            <TextBox x:Name="txtComSYRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComSYRate, Mode=TwoWay}" Grid.Row="4"/>
+                            <TextBox x:Name="txtComGJJRate" Grid.Column="1" TextWrapping="Wrap" RenderTransformOrigin="0.484,1.722" Text="{Binding ComGJJRate, Mode=TwoWay}" Grid.Row="5"/>
+                            <TextBox x:Name="txtComYL" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Text="{Binding ViewModel.Person.ComYL, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComYiL" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="1" Text="{Binding ViewModel.Person.ComYiL, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComShiYe" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="2" Text="{Binding ViewModel.Person.ComShiYe, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComGS" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="3" Text="{Binding ViewModel.Person.ComGS, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComSY" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="4" Text="{Binding ViewModel.Person.ComSY, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComGJJ" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="5" Text="{Binding ViewModel.Person.ComGJJ, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBlock Grid.Row="6" TextWrapping="Wrap" Text="{StaticResource ComSum}" Grid.ColumnSpan="3" HorizontalAlignment="Left" Width="200"/>
+                            <TextBlock Grid.Row="7" TextWrapping="Wrap" Text="{StaticResource ComTotal}" Grid.ColumnSpan="3"/>
+                            <TextBox x:Name="txtComSum" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="6" Text="{Binding ViewModel.Person.ComSum, ElementName=pageRoot, Mode=TwoWay}"/>
+                            <TextBox x:Name="txtComTotal" Grid.Column="3" TextWrapping="Wrap" IsReadOnly="True" Grid.Row="7" Text="{Binding ViewModel.Person.ComTotal, ElementName=pageRoot, Mode=TwoWay}"/>
+                        </Grid>
+                        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{StaticResource PerDetail}"/>
+                        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{StaticResource ComDetail}" Grid.Column="1"/>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+
+            <VisualStateManager.VisualStateGroups>
+
+                <!-- Visual states reflect the application's view state -->
+                <VisualStateGroup x:Name="ApplicationViewStates">
+                    <VisualState x:Name="FullScreenLandscape"/>
+                    <VisualState x:Name="Filled"/>
+
+                    <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
+                    <VisualState x:Name="FullScreenPortrait">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+
+                    <!-- The back button and title have different styles when snapped -->
+                    <VisualState x:Name="Snapped">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+
+</common:LayoutAwarePage>
